@@ -11,3 +11,4 @@ wheels/
 
 # User-defined files
 data/**/*.pkl
+data/**/*.pt

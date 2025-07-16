@@ -1,9 +1,10 @@
 ### 환경 세팅
+open `pyproject.toml` and change following region:
 ```
-uv venv --python 3.10
-source .venv/bin/activate
-uv pip install -r requirements.txt
+[[tool.uv.index]]
+name = "pytorch-cu{your_cuda_version}"
+url = "https://download.pytorch.org/whl/cu{your_cuda_version}"
+explicit = true
+```
 
-# 또는 python 3.10 가상환경에서
-pip install -r requirements.txt
-```
+and execute `uv sync`

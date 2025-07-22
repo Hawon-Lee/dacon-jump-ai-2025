@@ -4,7 +4,7 @@ device: 'cuda:0'
 
 model_path: 'experiments/hawon_exp/250722_first_exp/model.py' # 가져올 모델 스크립트 경로
 model_name: 'HawonNet' # 모델 스크립트 내에 정의된 메인 모델 이름
-model_parms: # 모델 초기화할 때 넣어주는 인자들을 여기다 적어주면 됩니다.
+model_params: # 모델 초기화할 때 넣어주는 인자들을 여기다 적어주면 됩니다.
   input_features: 384
   output_features: 1
 

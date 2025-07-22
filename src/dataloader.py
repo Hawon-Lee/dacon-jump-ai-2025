@@ -3,13 +3,14 @@ import os
 import torch
 from typing import Union
 from pathlib import Path
+from torch_geometric.data import Batch
 from torch.utils.data import Dataset, DataLoader
 
 
 class CustomDataset(Dataset):
     def __init__(self, data_paths: list[str]):
         self.data_paths = data_paths
-
+        
     def __len__(self):
         return len(self.data_paths)
 
@@ -41,7 +42,12 @@ class MasterDataLoader:
     def tr_dataloader(self, **args):
         tr_dataset = CustomDataset(self.tr_paths, **args)
         tr_dataloader = DataLoader(
-            tr_dataset, batch_size=self.batch_size, num_workers=self.num_workers, **args
+            tr_dataset,
+            batch_size=self.batch_size,
+            num_workers=self.num_workers,
+            shuffle=True,
+            collate_fn=_collate_fn,
+            **args,
         )
         print(f"Successfully loaded {len(tr_dataset)} train data")
 
@@ -50,11 +56,22 @@ class MasterDataLoader:
     def vl_dataloader(self, **args):
         vl_dataset = CustomDataset(self.vl_paths, **args)
         vl_dataloader = DataLoader(
-            vl_dataset, batch_size=self.batch_size, num_workers=self.num_workers, **args
+            vl_dataset,
+            batch_size=self.batch_size,
+            num_workers=self.num_workers,
+            shuffle=False,
+            collate_fn=_collate_fn,
+            **args,
         )
         print(f"Successfully loaded {len(vl_dataset)} validation data")
 
         return vl_dataloader
+
+    # def ts_dataloader(self, **args):
+
+
+def _collate_fn(batch):
+    return Batch.from_data_list(batch)
 
 
 if __name__ == "__main__":

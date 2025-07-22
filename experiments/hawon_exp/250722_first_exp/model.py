@@ -26,4 +26,4 @@ class HawonNet(nn.Module):
         desc_3d = x_in.desc_3d
         ecfp = x_in.ecfp
         
-        return self.layer(chemberta_mol)
+        return self.layer(mol_emb)

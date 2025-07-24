@@ -43,7 +43,8 @@ def train(
 ):
     """모델 학습 함수"""
 
-    best_dacon_score = -float("inf")
+    dacon_score_at_best_loss = -float("inf")
+    best_val_loss = float("inf")
     best_model_state = None
     patience_counter = 0
 
@@ -103,17 +104,18 @@ def train(
         # 해당 에폭 성능 바탕으로 후작업
         if scheduler is not None:
             try:
-                scheduler.step(dacon_score)
+                scheduler.step(avg_val_loss)
             except TypeError:
                 # metric을 받지 않는 scheduler의 경우
                 scheduler.step()
 
         # 최고 성능 저장 및 조기 종료 카운터 관리
-        if dacon_score > best_dacon_score:
-            best_dacon_score = dacon_score
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
+            dacon_score_at_best_loss = dacon_score
             best_model_state = copy.deepcopy(model.state_dict())
             patience_counter = 0
-            print(f"INFO: New best score: {best_dacon_score:.4f}. Model saved.")
+            print(f"INFO: New best score: {best_val_loss:.4f}. Model saved (dacon score: {dacon_score:.4f})")
         else:
             patience_counter += 1
 
@@ -121,7 +123,7 @@ def train(
             print(f"INFO: Early stopping triggered after {epoch + 1} epochs.")
             break  # 학습 루프 탈출
 
-    print("학습 완료!")
+    print(f"INFO: 학습이 종료되었습니다. Best val loss {best_val_loss:.4f}, Dacon score {dacon_score_at_best_loss:.4f}")
 
     if best_model_state is not None:
         model.load_state_dict(best_model_state)

@@ -1,19 +1,19 @@
 # 데이터 관련 설정
 train_data_dir: 'data/input/tr_vl' # 모델 학습용 인풋 데이터 경로
 test_data_dir: 'data/input/test' # 모델 학습용 인풋 데이터 경로
-data_split_file: 'data/tr_vl_split_250717.json'
+data_split_file: 'data/250724_split_noImputed.json'
 num_workers: 0
 
 # 모델 관련 설정
 model_path: 'experiments/hawon_exp/250722_first_exp/model.py' # 가져올 모델 스크립트 경로
 model_name: 'HawonNet' # 모델 스크립트 내에 정의된 메인 모델 이름
 model_params: # 모델 초기화할 때 넣어주는 인자들을 여기다 적어주면 됩니다.
-  in_features: 384
+  in_features: 768
   out_features: 1
 
 # 학습 관련 설정
 device: 0 # device number
-num_epochs: 1
+num_epochs: 100
 batch_size: 64
 criterion: 'MSELoss'
 
@@ -25,6 +25,6 @@ optimizer_params:
 scheduler: 'ReduceLROnPlateau'
 scheduler_params:
   mode: 'max'
-  patience: 5
+  patience: 4
 
-early_stop_patience: 10
+early_stop_patience: 7

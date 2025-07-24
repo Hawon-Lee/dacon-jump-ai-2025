@@ -56,8 +56,8 @@ def submit(
     metric: Literal["pIC50", "IC50_nM", "IC50_M"] = "pIC50",
 ) -> pd.DataFrame:
 
-    print("pred shape:", pred.shape)
-    
+    print("예측된 IC50값 shape:", pred.shape)
+
     if isinstance(pred, torch.Tensor):
         pred = pred.numpy()
 

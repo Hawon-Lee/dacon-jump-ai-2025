@@ -8,7 +8,7 @@ class HawonNet(nn.Module):
         self.layer = nn.Sequential(
             nn.Linear(in_features, in_features//2),
             nn.ReLU(inplace=True),
-            nn.Dropout(p=0.1)
+            nn.Dropout(p=0.1),
             nn.Linear(in_features//2, out_features)
         )
         
@@ -26,4 +26,4 @@ class HawonNet(nn.Module):
         desc_3d = x_in.desc_3d
         ecfp = x_in.ecfp
         
-        return self.layer(mol_emb)
+        return self.layer(cls_emb)

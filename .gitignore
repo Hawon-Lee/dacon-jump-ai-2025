@@ -14,3 +14,4 @@ data/**/*.pkl
 data/**/*.pt
 **/*.tar.xz
 **/*.tar.gz
+experiments/**/*.pt

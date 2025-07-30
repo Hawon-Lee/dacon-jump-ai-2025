@@ -115,7 +115,7 @@ def train(
             dacon_score_at_best_loss = dacon_score
             best_model_state = copy.deepcopy(model.state_dict())
             patience_counter = 0
-            print(f"INFO: New best score: {best_val_loss:.4f}. Model saved (dacon score: {dacon_score:.4f})")
+            print(f"INFO: New best loss: {best_val_loss:.4f}. Model saved (dacon score: {dacon_score:.4f})")
         else:
             patience_counter += 1
 
@@ -135,6 +135,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--config",
+        "-c",
         type=str,
         default="./experiments/hawon_exp/250722_first_exp/config.yaml",
         help="Path to the YAML configuration file",

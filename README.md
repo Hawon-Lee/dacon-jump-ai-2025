@@ -1,14 +1,6 @@
 ### 환경 세팅
-open `pyproject.toml` and change following region:
-```
-[[tool.uv.index]]
-name = "pytorch-cu{your_cuda_version}" # ex) cu118
-url = "https://download.pytorch.org/whl/cu{your_cuda_version}"
-explicit = true
-```
-
-and execute `uv sync`
-
+pip install -r pyproject.toml
+그리고 본인의 cuda version에 맞는 torch와 torch-geometric (+ torch-cluster, torch-sparse) 를 깔아주세요
 
 
 ### 모델 학습하기

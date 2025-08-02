@@ -1,5 +1,5 @@
 ### 환경 세팅
-pip install -r pyproject.toml
+uv pip install -r pyproject.toml
 그리고 본인의 cuda version에 맞는 torch와 torch-geometric (+ torch-cluster, torch-sparse) 를 깔아주세요
 
 

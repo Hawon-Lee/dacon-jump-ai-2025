@@ -4,7 +4,7 @@ import torch
 from datetime import datetime
 from scipy.stats import pearsonr
 from sklearn.metrics import root_mean_squared_error
-from typing import Union, Literal
+from typing import Union, Literal, Optional
 
 
 def calc_dacon_score(
@@ -54,6 +54,7 @@ def submit(
     source_csv: str = "../data/raw/sample_submission.csv",
     save_dir: str = "../submits",
     metric: Literal["pIC50", "IC50_nM", "IC50_M"] = "pIC50",
+    suffix: Optional[str] = ""
 ) -> pd.DataFrame:
 
     print("예측된 IC50값 shape:", pred.shape)
@@ -80,6 +81,8 @@ def submit(
         )
 
     now = datetime.now().strftime("%y%m%d-%H%M%S")
+    if suffix:
+        now += f"_{suffix}"
     path2save = f"{save_dir}/{now}.csv"
     submission["ASK1_IC50_nM"] = pred_nM
     submission.to_csv(path2save, index=False)

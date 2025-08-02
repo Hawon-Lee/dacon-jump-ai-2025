@@ -58,11 +58,11 @@ def train(
             x_in = batch_data.to(device)
 
             true = x_in.label.float()
-            pred = model(x_in)
+            pred, clr_loss = model(x_in)
             pred = pred.squeeze()
 
             optimizer.zero_grad()
-            loss = criterion(pred, true)
+            loss = criterion(pred, true) + clr_loss
             loss.backward()
             optimizer.step()
 
@@ -103,10 +103,9 @@ def train(
 
         # 해당 에폭 성능 바탕으로 후작업
         if scheduler is not None:
-            try:
+            if hasattr(scheduler, 'mode'):  # ReduceLROnPlateau인 경우 loss 를 입력받아야 함
                 scheduler.step(avg_val_loss)
-            except TypeError:
-                # metric을 받지 않는 scheduler의 경우
+            else:
                 scheduler.step()
 
         # 최고 성능 저장 및 조기 종료 카운터 관리
@@ -128,7 +127,7 @@ def train(
     if best_model_state is not None:
         model.load_state_dict(best_model_state)
 
-    return model
+    return model, best_val_loss, dacon_score_at_best_loss
 
 
 def main():
@@ -183,12 +182,11 @@ def main():
     sc_name = config["scheduler"]
     sc_params = config.get("scheduler_params", {})
     scheduler = get_instance(lr_scheduler, sc_name, optimizer, **sc_params)
-
     # early_stop
     early_stop_patience = config["early_stop_patience"]
 
     # train
-    best_model = train(
+    best_model, best_val_loss, dacon_score = train(
         model,
         tr_dataloader,
         vl_dataloader,
@@ -219,6 +217,7 @@ def main():
         source_csv="data/raw/sample_submission.csv",
         save_dir=config_dir,
         metric="pIC50",
+        suffix=str(round(best_val_loss, 4)) + "_" + str(round(dacon_score, 4))
     )
 
 if __name__ == "__main__":

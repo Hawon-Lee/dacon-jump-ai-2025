@@ -60,7 +60,7 @@ def get_ecfp(mol: Chem.rdchem.Mol, radius=2, fpSize=2048) -> torch.Tensor:
     fp_generator = rdFingerprintGenerator.GetMorganGenerator(
         radius=radius, fpSize=fpSize
     )
-    
+
     fp = fp_generator.GetFingerprintAsNumPy(mol)
     return torch.from_numpy(fp)
 
@@ -96,14 +96,14 @@ class MolPreprocessor:
         self.PERIODS = [0, 1, 2, 3, 4, 5]
         self.GROUPS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
 
-    def one_of_k_encoding(self, x, allowable_set: list) -> list[bool]:
+    def _one_of_k_encoding(self, x, allowable_set: list) -> list[bool]:
         if x not in allowable_set:
             raise Exception(
                 "input {0} not in allowable set{1}:".format(x, allowable_set)
             )
         return list(map(lambda s: x == s, allowable_set))
 
-    def one_of_k_encoding_unk(self, x, allowable_set: list) -> list[bool]:
+    def _one_of_k_encoding_unk(self, x, allowable_set: list) -> list[bool]:
         """Maps inputs not in the allowable set to the last element."""
         if x not in allowable_set:
             x = allowable_set[-1]
@@ -111,17 +111,17 @@ class MolPreprocessor:
 
     def get_period_group(self, atom) -> list[bool]:
         period, group = self.PERIODIC_TABLE[atom.GetSymbol().upper()]
-        return self.one_of_k_encoding(period, self.PERIODS) + self.one_of_k_encoding(
+        return self._one_of_k_encoding(period, self.PERIODS) + self._one_of_k_encoding(
             group, self.GROUPS
         )
 
     def atom_feature(self, mol, atom_idx):
         atom = mol.GetAtomWithIdx(atom_idx)
         return np.array(
-            self.one_of_k_encoding_unk(atom.GetSymbol(), self.SYMBOLS)
-            + self.one_of_k_encoding_unk(atom.GetDegree(), self.DEGREES)
-            + self.one_of_k_encoding_unk(atom.GetHybridization(), self.HYBRIDIZATIONS)
-            + self.one_of_k_encoding_unk(atom.GetFormalCharge(), self.FORMALCHARGES)
+            self._one_of_k_encoding_unk(atom.GetSymbol(), self.SYMBOLS)
+            + self._one_of_k_encoding_unk(atom.GetDegree(), self.DEGREES)
+            + self._one_of_k_encoding_unk(atom.GetHybridization(), self.HYBRIDIZATIONS)
+            + self._one_of_k_encoding_unk(atom.GetFormalCharge(), self.FORMALCHARGES)
             + self.get_period_group(atom)
             + [atom.GetIsAromatic()]
         )  # (9, 6, 7, 7, 24, 1) --> total 54
